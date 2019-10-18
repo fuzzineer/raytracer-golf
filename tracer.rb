@@ -14,12 +14,8 @@ class Vec3
 	def -(vec)
 		Vec3.new(x - vec.x, y - vec.y, z - vec.z)
 	end
-	def *(color_fac)
-		if color_fac.is_a?(Vec3)
-			Vec3.new(x * color_fac.x, y * color_fac.y, z * color_fac.z)
-		else
-			Vec3.new(x * color_fac, y * color_fac, z * color_fac)
-		end
+	def *(fac)
+		Vec3.new(x * fac, y * fac, z * fac)
 	end
 	def /(fac)
 		Vec3.new(x / fac, y / fac, z / fac)
