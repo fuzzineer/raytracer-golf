@@ -96,7 +96,7 @@ class PointLight
 	end
 end
 
-def raytrace(ray_orig, ray_dir, world, lights, depth = 0)
+def raytrace(ray_orig, ray_dir, world, depth = 0)
 	
 	nearest_obj = nil
 	min_dist = 1e8
@@ -118,34 +118,32 @@ def raytrace(ray_orig, ray_dir, world, lights, depth = 0)
 	
 	color = Color.new(0.05)
 	
-	lights.each do |light|
-		
-		light_dir = (light.pos - intersect).normalize
-		origin_dir = (Vec3.new(0) - intersect).normalize
-		
-		offset = intersect + normal * 1e-4
-		
-		light_distances = world.map { |obj| obj.intersect(offset, light_dir) }
-		light_nearest = light_distances.min
-		light_visible = light_distances[world.index(nearest_obj)] == light_nearest
-		
-		lv = [0.0, normal.dot(light_dir)].max
-		color += nearest_obj.color(intersect) * light.color * lv if light_visible
-		
-		if nearest_obj.reflect > 0 && depth < MAX_DEPTH
-			reflect_ray_dir = (ray_dir - normal * 2.0 * ray_dir.dot(normal)).normalize
-			color += raytrace(offset, reflect_ray_dir, world, lights, depth + 1) * nearest_obj.reflect
-		end
-		
-		phong = normal.dot((light_dir + origin_dir).normalize)
-		color += light.color * (phong.clamp(0.0, 1.0) ** 50) if light_visible
-		
+	light = PointLight.new(Vec3.new(0, 20, 10), Color.new(1))
+	
+	light_dir = (light.pos - intersect).normalize
+	origin_dir = (Vec3.new(0) - intersect).normalize
+	
+	offset = intersect + normal * 1e-4
+	
+	light_distances = world.map { |obj| obj.intersect(offset, light_dir) }
+	light_nearest = light_distances.min
+	light_visible = light_distances[world.index(nearest_obj)] == light_nearest
+	
+	lv = [0.0, normal.dot(light_dir)].max
+	color += nearest_obj.color(intersect) * light.color * lv if light_visible
+	
+	if nearest_obj.reflect > 0 && depth < MAX_DEPTH
+		reflect_ray_dir = (ray_dir - normal * 2.0 * ray_dir.dot(normal)).normalize
+		color += raytrace(offset, reflect_ray_dir, world, depth + 1) * nearest_obj.reflect
 	end
+	
+	phong = normal.dot((light_dir + origin_dir).normalize)
+	color += light.color * (phong.clamp(0.0, 1.0) ** 50) if light_visible
 	
 	return color
 end
 
-def render(world, lights)
+def render(world)
 	image = ChunkyPNG::Image.new(WIDTH, HEIGHT)
 	
 	aspect_ratio = WIDTH / HEIGHT.to_f
@@ -159,7 +157,7 @@ def render(world, lights)
 			ray_orig = Vec3.new(0, 0, 0)
 			ray_dir = Vec3.new(x, y, 1).normalize
 			
-			color = raytrace(ray_orig, ray_dir, world, lights)
+			color = raytrace(ray_orig, ray_dir, world)
 			image[col, row] = ChunkyPNG::Color.rgb(*color.components.map{|c| (c.clamp(0.0, 1.0) * 255).to_i})
 		end
 	end
@@ -172,9 +170,5 @@ world = [
 	Sphere.new(Vec3.new(0, 0, 20), 4, Color.new(1, 0, 0), 0.2),
 	Sphere.new(Vec3.new(6, -1, 20), 2, Color.new(0, 0, 1), 0.2),
 ]
-lights = [
-	PointLight.new(Vec3.new(0, 20, 10), Color.new(1)),
-	PointLight.new(Vec3.new(20, 20, 10), Color.new(0, 1, 0)),
-]
 
-render(world, lights)
+render(world)
