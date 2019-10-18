@@ -39,15 +39,6 @@ class Vec3
 end
 Color = Vec3
 
-# Config
-# ------------------------------------
-WIDTH = 640
-HEIGHT = 480
-MAX_DEPTH = 5
-BACKGROUND_COLOR = Color.new(0.5)
-FOV = 30
-# ------------------------------------
-
 class Sphere
 	attr_reader :center, :radius, :color_vec, :reflect
 	def initialize(center, radius, color_vec, reflect)
@@ -80,7 +71,7 @@ end
 class CheckeredSphere < Sphere
 	def color(intersect)
 		checker = (intersect.x.floor % 2) == (intersect.z.floor % 2)
-		color_vec * (checker ? 1.0 : 0.0)
+		color_vec * (checker ? 1 : 0)
 	end
 end
 
@@ -98,7 +89,7 @@ def raytrace(ray_orig, ray_dir, world, depth = 0)
 	end
 	
 	if nearest_obj.nil?
-		return BACKGROUND_COLOR
+		return Color.new(0.5)
 	end
 	
 	intersect = ray_orig + ray_dir * min_dist
@@ -117,36 +108,36 @@ def raytrace(ray_orig, ray_dir, world, depth = 0)
 	light_nearest = light_distances.min
 	light_visible = light_distances[world.index(nearest_obj)] == light_nearest
 	
-	lv = [0.0, normal.dot(light_dir)].max
+	lv = [0, normal.dot(light_dir)].max
 	color += nearest_obj.color(intersect) * lv if light_visible
 	
-	if nearest_obj.reflect > 0 && depth < MAX_DEPTH
-		reflect_ray_dir = (ray_dir - normal * 2.0 * ray_dir.dot(normal)).normalize
+	if nearest_obj.reflect > 0 && depth < 5
+		reflect_ray_dir = (ray_dir - normal * 2 * ray_dir.dot(normal)).normalize
 		color += raytrace(offset, reflect_ray_dir, world, depth + 1) * nearest_obj.reflect
 	end
 	
 	phong = normal.dot((light_dir + origin_dir).normalize)
-	color += Color.new(1) * (phong.clamp(0.0, 1.0) ** 50) if light_visible
+	color += Color.new(1) * (phong.clamp(0, 1) ** 50) if light_visible
 	
 	return color
 end
 
 def render(world)
-	image = ChunkyPNG::Image.new(WIDTH, HEIGHT)
+	image = ChunkyPNG::Image.new(640, 480)
 	
-	aspect_ratio = WIDTH / HEIGHT.to_f
-	angle = Math.tan(Math::PI * 0.5 * FOV / 180)
+	aspect_ratio = 4/3.0
+	angle = 0.2679491924311227
 	
-	(0...HEIGHT).each do |row|
-		(0...WIDTH).each do |col|
-			x = (2 * ((col + 0.5) * (1.0 / WIDTH)) - 1) * angle * aspect_ratio
-			y = (1 - 2 * ((row + 0.5) * (1.0 / HEIGHT))) * angle
+	0.upto(479) do |row|
+		0.upto(639) do |col|
+			x = (2 * ((col + 0.5) * (1.0 / 640)) - 1) * angle * aspect_ratio
+			y = (1 - 2 * ((row + 0.5) * (1.0 / 480))) * angle
 			
 			ray_orig = Vec3.new(0, 0, 0)
 			ray_dir = Vec3.new(x, y, 1).normalize
 			
 			color = raytrace(ray_orig, ray_dir, world)
-			image[col, row] = ChunkyPNG::Color.rgb(*color.components.map{|c| (c.clamp(0.0, 1.0) * 255).to_i})
+			image[col, row] = ChunkyPNG::Color.rgb(*color.components.map{|c| (c.clamp(0, 1) * 255).to_i})
 		end
 	end
 	
