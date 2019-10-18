@@ -9,8 +9,8 @@ class Vec3
 	def +(vec)
 		Vec3.new(x + vec.x, y + vec.y, z + vec.z)
 	end
-	def -(vec)
-		Vec3.new(x - vec.x, y - vec.y, z - vec.z)
+	def -@
+		Vec3.new(-x, -y, -z)
 	end
 	def *(fac)
 		Vec3.new(x * fac, y * fac, z * fac)
@@ -42,7 +42,7 @@ class Sphere
 	end
 	
 	def intersect(ray_orig, ray_dir)
-		dist = ray_orig - center
+		dist = ray_orig + -center
 		b = 2 * dist.dot(ray_dir)
 		return 1e8 if b > 0
 		c = dist.abs - radius ** 2
@@ -81,14 +81,14 @@ def raytrace(ray_orig, ray_dir, world, depth = 0)
 	return Vec3.new(0.5) if nearest_obj.nil?
 	
 	intersect = ray_orig + ray_dir * min_dist
-	normal = ((intersect - nearest_obj.center) / nearest_obj.radius).normalize
+	normal = ((intersect + -nearest_obj.center) / nearest_obj.radius).normalize
 	
 	color = Vec3.new(0.05)
 	
 	light_pos = Vec3.new(0, 20, 10)
 	
-	light_dir = (light_pos - intersect).normalize
-	origin_dir = (Vec3.new(0) - intersect).normalize
+	light_dir = (light_pos + -intersect).normalize
+	origin_dir = (Vec3.new(0) + -intersect).normalize
 	
 	offset = intersect + normal * 1e-4
 	
@@ -100,7 +100,7 @@ def raytrace(ray_orig, ray_dir, world, depth = 0)
 	color += nearest_obj.color(intersect) * lv if light_visible
 	
 	if nearest_obj.reflect > 0 && depth < 5
-		reflect_ray_dir = (ray_dir - normal * 2 * ray_dir.dot(normal)).normalize
+		reflect_ray_dir = (ray_dir + -normal * 2 * ray_dir.dot(normal)).normalize
 		color += raytrace(offset, reflect_ray_dir, world, depth + 1) * nearest_obj.reflect
 	end
 	
