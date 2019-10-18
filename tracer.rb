@@ -86,29 +86,23 @@ def raytrace(ray_orig, ray_dir, world, depth = 0)
 	return color
 end
 
-def render(world)
-	
-	aspect_ratio = 4/3.0
-	angle = 0.2679491924311227
-	
-	puts "P3 640 480 255"
-	
-	0.upto(479) do |row|
-		0.upto(639) do |col|
-			x = (2 * ((col + 0.5) * (1.0 / 640)) - 1) * angle * aspect_ratio
-			y = (1 - 2 * ((row + 0.5) * (1.0 / 480))) * angle
-			
-			color = raytrace([0]*3, norm([x, y, 1.0]), world)
-			color.each {|c| $><<(c.clamp(0, 1) * 255).to_i<<" "}
-		end
-	end
-	
-end
-
 world = [
 	CheckeredSphere.new([0, -10004, 20], 10000, [0.25]*3, 0.2),
 	Sphere.new([0, 0, 20], 4, [1, 0, 0], 0.2),
 	Sphere.new([6, -1, 20], 2, [0, 0, 1], 0.2),
 ]
 
-render(world)
+aspect_ratio = 4/3.0
+angle = 0.2679491924311227
+
+puts "P3 640 480 255"
+
+0.upto(479) do |row|
+	0.upto(639) do |col|
+		x = (2 * ((col + 0.5) * (1.0 / 640)) - 1) * angle * aspect_ratio
+		y = (1 - 2 * ((row + 0.5) * (1.0 / 480))) * angle
+		
+		color = raytrace([0]*3, norm([x, y, 1.0]), world)
+		color.each {|c| $><<(c.clamp(0, 1) * 255).to_i<<" "}
+	end
+end
