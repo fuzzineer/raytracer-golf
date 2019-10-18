@@ -2,10 +2,10 @@ require "chunky_png"
 
 class Vec3
 	attr_reader :x, :y, :z
-    def initialize(x, y = x, z = x)
-        @x = x
-        @y = y
-        @z = z
+	def initialize(x, y = x, z = x)
+		@x = x
+		@y = y
+		@z = z
 	end
 	
 	def +(vec)
@@ -14,12 +14,12 @@ class Vec3
 	def -(vec)
 		Vec3.new(x - vec.x, y - vec.y, z - vec.z)
 	end
-    def *(color_fac)
-        if color_fac.is_a?(Vec3)
-            Vec3.new(x * color_fac.x, y * color_fac.y, z * color_fac.z)
-        else
-            Vec3.new(x * color_fac, y * color_fac, z * color_fac)
-        end
+	def *(color_fac)
+		if color_fac.is_a?(Vec3)
+			Vec3.new(x * color_fac.x, y * color_fac.y, z * color_fac.z)
+		else
+			Vec3.new(x * color_fac, y * color_fac, z * color_fac)
+		end
 	end
 	def /(fac)
 		Vec3.new(x / fac, y / fac, z / fac)
@@ -54,11 +54,11 @@ FOV = 30
 
 class Sphere
 	attr_reader :center, :radius, :color_vec, :reflect
-    def initialize(center, radius, color_vec, reflect)
-        @center = center
-        @radius = radius
-        @color_vec = color_vec
-        @reflect = reflect
+	def initialize(center, radius, color_vec, reflect)
+		@center = center
+		@radius = radius
+		@color_vec = color_vec
+		@reflect = reflect
 	end
 	
 	def intersect(ray_orig, ray_dir)
@@ -89,11 +89,11 @@ class CheckeredSphere < Sphere
 end
 
 class PointLight
-    attr_accessor :pos, :color
-    def initialize(pos, color)
-        @pos = pos
-        @color = color
-    end
+	attr_accessor :pos, :color
+	def initialize(pos, color)
+		@pos = pos
+		@color = color
+	end
 end
 
 def raytrace(ray_orig, ray_dir, world, lights, depth = 0)
