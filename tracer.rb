@@ -1,4 +1,3 @@
-require "chunky_png"
 
 def add_vec(a, b)
 	a.zip(b).map{|m,n|m+n}
@@ -88,10 +87,11 @@ def raytrace(ray_orig, ray_dir, world, depth = 0)
 end
 
 def render(world)
-	image = ChunkyPNG::Image.new(640, 480)
 	
 	aspect_ratio = 4/3.0
 	angle = 0.2679491924311227
+	
+	puts "P3 640 480 255"
 	
 	0.upto(479) do |row|
 		0.upto(639) do |col|
@@ -99,11 +99,10 @@ def render(world)
 			y = (1 - 2 * ((row + 0.5) * (1.0 / 480))) * angle
 			
 			color = raytrace([0]*3, norm([x, y, 1.0]), world)
-			image[col, row] = ChunkyPNG::Color.rgb(*color.map{|c| (c.clamp(0, 1) * 255).to_i})
+			color.each {|c| $><<(c.clamp(0, 1) * 255).to_i<<" "}
 		end
 	end
 	
-	image.save('out.png')
 end
 
 world = [
