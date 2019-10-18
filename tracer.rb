@@ -67,18 +67,9 @@ end
 
 def raytrace(ray_orig, ray_dir, world, depth = 0)
 	
-	nearest_obj = nil
-	min_dist = 1e8
+	min_dist, nearest_obj = world.to_h{|s| [s.intersect(ray_orig, ray_dir), s]}.min_by{|k,v| k}
 	
-	world.each do |obj|
-		dist = obj.intersect(ray_orig, ray_dir)
-		if dist < min_dist
-			min_dist = dist
-			nearest_obj = obj
-		end
-	end
-	
-	return Vec3.new(0.5) if nearest_obj.nil?
+	return Vec3.new(0.5) if min_dist >= 1e8
 	
 	intersect = ray_orig + ray_dir * min_dist
 	normal = ((intersect + -nearest_obj.center) / nearest_obj.radius).normalize
