@@ -32,16 +32,13 @@ class Sphere
 	end
 	
 	def intersect(ray_orig, ray_dir)
-		dist = sub_vec(ray_orig, center)
-		b = 2 * dot_vec(dist, ray_dir)
-		return 1e8 if b > 0
-		c = abs(dist) - radius ** 2
-		disc = (b ** 2) - (4 * c)
-		return 1e8 if disc < 0
-		sq = Math.sqrt(disc)
-		t0 = (-b - sq) / 2
-		t1 = (-b + sq) / 2
-		return t0 < t1 ? t0 : t1
+		l = sub_vec(center, ray_orig)
+		tca = dot_vec(l, ray_dir)
+		return 1e8 if tca < 0
+		d2 = abs(l) - tca ** 2
+		return 1e8 if d2 > radius ** 2
+		thc = Math.sqrt(radius ** 2 - d2)
+		return [tca - thc, tca + thc].min
 	end
 	def color(intersect)
 		color_vec
