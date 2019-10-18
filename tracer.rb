@@ -88,14 +88,6 @@ class CheckeredSphere < Sphere
 	end
 end
 
-class PointLight
-	attr_accessor :pos, :color
-	def initialize(pos, color)
-		@pos = pos
-		@color = color
-	end
-end
-
 def raytrace(ray_orig, ray_dir, world, depth = 0)
 	
 	nearest_obj = nil
@@ -118,9 +110,9 @@ def raytrace(ray_orig, ray_dir, world, depth = 0)
 	
 	color = Color.new(0.05)
 	
-	light = PointLight.new(Vec3.new(0, 20, 10), Color.new(1))
+	light_pos = Vec3.new(0, 20, 10)
 	
-	light_dir = (light.pos - intersect).normalize
+	light_dir = (light_pos - intersect).normalize
 	origin_dir = (Vec3.new(0) - intersect).normalize
 	
 	offset = intersect + normal * 1e-4
@@ -130,7 +122,7 @@ def raytrace(ray_orig, ray_dir, world, depth = 0)
 	light_visible = light_distances[world.index(nearest_obj)] == light_nearest
 	
 	lv = [0.0, normal.dot(light_dir)].max
-	color += nearest_obj.color(intersect) * light.color * lv if light_visible
+	color += nearest_obj.color(intersect) * lv if light_visible
 	
 	if nearest_obj.reflect > 0 && depth < MAX_DEPTH
 		reflect_ray_dir = (ray_dir - normal * 2.0 * ray_dir.dot(normal)).normalize
@@ -138,7 +130,7 @@ def raytrace(ray_orig, ray_dir, world, depth = 0)
 	end
 	
 	phong = normal.dot((light_dir + origin_dir).normalize)
-	color += light.color * (phong.clamp(0.0, 1.0) ** 50) if light_visible
+	color += Color.new(1) * (phong.clamp(0.0, 1.0) ** 50) if light_visible
 	
 	return color
 end
