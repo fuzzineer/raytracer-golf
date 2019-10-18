@@ -3,9 +3,7 @@ require "chunky_png"
 class Vec3
 	attr_reader :x, :y, :z
 	def initialize(x, y = x, z = x)
-		@x = x
-		@y = y
-		@z = z
+		@x, @y, @z = x, y, z
 	end
 	
 	def +(vec)
@@ -18,10 +16,7 @@ class Vec3
 		Vec3.new(x * fac, y * fac, z * fac)
 	end
 	def /(fac)
-		Vec3.new(x / fac, y / fac, z / fac)
-	end
-	def -@
-		Vec3.new(-x, -y, -z)
+		self * (1.0 / fac)
 	end
 	def abs
 		dot(self)
@@ -30,14 +25,12 @@ class Vec3
 		[x, y, z]
 	end
 	def normalize
-		mag = Math.sqrt(self.abs)
-		Vec3.new(x / mag, y / mag, z / mag)
+		self / Math.sqrt(abs)
 	end
 	def dot(vec)
 		x * vec.x + y * vec.y + z * vec.z
 	end
 end
-Color = Vec3
 
 class Sphere
 	attr_reader :center, :radius, :color_vec, :reflect
@@ -59,9 +52,6 @@ class Sphere
 		t0 = (-b - sq) / 2
 		t1 = (-b + sq) / 2
 		return t0 < t1 ? t0 : t1
-	end
-	def normal(intersect)
-		(intersect - center) / radius
 	end
 	def color(intersect)
 		color_vec
@@ -88,14 +78,12 @@ def raytrace(ray_orig, ray_dir, world, depth = 0)
 		end
 	end
 	
-	if nearest_obj.nil?
-		return Color.new(0.5)
-	end
+	return Vec3.new(0.5) if nearest_obj.nil?
 	
 	intersect = ray_orig + ray_dir * min_dist
-	normal = nearest_obj.normal(intersect).normalize
+	normal = ((intersect - nearest_obj.center) / nearest_obj.radius).normalize
 	
-	color = Color.new(0.05)
+	color = Vec3.new(0.05)
 	
 	light_pos = Vec3.new(0, 20, 10)
 	
@@ -117,7 +105,7 @@ def raytrace(ray_orig, ray_dir, world, depth = 0)
 	end
 	
 	phong = normal.dot((light_dir + origin_dir).normalize)
-	color += Color.new(1) * (phong.clamp(0, 1) ** 50) if light_visible
+	color += Vec3.new(1) * (phong.clamp(0, 1) ** 50) if light_visible
 	
 	return color
 end
@@ -133,7 +121,7 @@ def render(world)
 			x = (2 * ((col + 0.5) * (1.0 / 640)) - 1) * angle * aspect_ratio
 			y = (1 - 2 * ((row + 0.5) * (1.0 / 480))) * angle
 			
-			ray_orig = Vec3.new(0, 0, 0)
+			ray_orig = Vec3.new(0)
 			ray_dir = Vec3.new(x, y, 1).normalize
 			
 			color = raytrace(ray_orig, ray_dir, world)
@@ -145,9 +133,9 @@ def render(world)
 end
 
 world = [
-	CheckeredSphere.new(Vec3.new(0, -10004, 20), 10000, Color.new(0.25), 0.2),
-	Sphere.new(Vec3.new(0, 0, 20), 4, Color.new(1, 0, 0), 0.2),
-	Sphere.new(Vec3.new(6, -1, 20), 2, Color.new(0, 0, 1), 0.2),
+	CheckeredSphere.new(Vec3.new(0, -10004, 20), 10000, Vec3.new(0.25), 0.2),
+	Sphere.new(Vec3.new(0, 0, 20), 4, Vec3.new(1, 0, 0), 0.2),
+	Sphere.new(Vec3.new(6, -1, 20), 2, Vec3.new(0, 0, 1), 0.2),
 ]
 
 render(world)
