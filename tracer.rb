@@ -1,24 +1,24 @@
 
 class Array
-	def + a
-		zip(a).map{|m,n|m+n}
+	def +v
+		zip(v).map{|a,b|a+b}
 	end
-	def - a
-		zip(a).map{|m,n|m-n}
+	def -v
+		zip(v).map{|a,b|a-b}
 	end
-	def * f
-		map{|m|m*f}
+	def *f
+		map{|a|a*f}
 	end
-	def / f
+	def /f
 		map{|m|m/f}
 	end
-	def % a
-		zip(a).map{|m,n|m*n}.sum
+	def %v
+		zip(v).map{|a,b|a*b}.sum
 	end
 end
 
-N=->a{
-	a/Math.sqrt(a%a)
+N=->v{
+	v/Math.sqrt(v%v)
 }
 INTERSECT=->sphere,ray_orig,ray_dir{
 	l=sphere[0]-ray_orig
