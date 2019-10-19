@@ -29,9 +29,6 @@ INTERSECT=->sphere,ray_orig,ray_dir{
 	thc=Math.sqrt(sphere[1]**2-d2)
 	[tca-thc,tca+thc].min
 }
-COLOR=->sphere,intersect{
-	(intersect[0].floor%2)==(intersect[2].floor%2)?sphere[2]:sphere[3]
-}
 
 RAYTRACE=->ray_orig,ray_dir,world,depth{
 	
@@ -55,7 +52,7 @@ RAYTRACE=->ray_orig,ray_dir,world,depth{
 	light_visible=light_distances[world.index(sphere)]==light_distances.min
 	
 	lv=[0,normal%light_dir].max
-	color+=COLOR[sphere,intersect]*lv if light_visible
+	color+=((intersect[0].floor%2==intersect[2].floor%2)?sphere[2]:sphere[3])*lv if light_visible
 	
 	if sphere[4]>0&&depth<5
 		reflect_ray_dir=N[ray_dir-normal*2*(ray_dir%normal)]
