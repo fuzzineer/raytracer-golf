@@ -23,7 +23,7 @@ V=->n{
 N=->v{
 	v/Math.sqrt(v%v)
 }
-INTERSECT=->sphere,ray_orig,ray_dir{
+I=->sphere,ray_orig,ray_dir{
 	l=sphere[0]-ray_orig
 	tca=l%ray_dir
 	return 1e8 if tca<0
@@ -33,9 +33,9 @@ INTERSECT=->sphere,ray_orig,ray_dir{
 	[tca-thc,tca+thc].min
 }
 
-RAYTRACE=->ray_orig,ray_dir,world,depth{
+R=->ray_orig,ray_dir,world,depth{
 	
-	sphere,min_dist=world.to_h{|s|[s,INTERSECT[s,ray_orig,ray_dir]]}.min_by{|k,v|v}
+	sphere,min_dist=world.to_h{|s|[s,I[s,ray_orig,ray_dir]]}.min_by{|k,v|v}
 	
 	return V[0.5] if min_dist>=1e8
 	
@@ -51,7 +51,7 @@ RAYTRACE=->ray_orig,ray_dir,world,depth{
 	
 	offset=intersect+normal*1e-4
 	
-	light_distances=world.map{|s|INTERSECT[s,offset,light_dir]}
+	light_distances=world.map{|s|I[s,offset,light_dir]}
 	light_visible=light_distances[world.index(sphere)]==light_distances.min
 	
 	lv=[0,normal%light_dir].max
@@ -59,7 +59,7 @@ RAYTRACE=->ray_orig,ray_dir,world,depth{
 	
 	if sphere[4]>0&&depth<5
 		reflect_ray_dir=N[ray_dir-normal*2*(ray_dir%normal)]
-		color+=RAYTRACE[offset,reflect_ray_dir,world,depth+1]*sphere[4]
+		color+=R[offset,reflect_ray_dir,world,depth+1]*sphere[4]
 	end
 	
 	phong=normal%N[light_dir+origin_dir]
@@ -83,6 +83,6 @@ puts"P3 640 480 255"
 		x=(2*((col+0.5)/640)-1)*angle*4/3.0
 		y=(1-2*((row+0.5)/480))*angle
 		
-		RAYTRACE[V[0],N[[x,y,1]],world,0].each{|c|$><<(c.clamp(0,1)*255).to_i<<" "}
+		R[V[0],N[[x,y,1]],world,0].each{|c|$><<(c.clamp(0,1)*255).to_i<<" "}
 	end
 end
