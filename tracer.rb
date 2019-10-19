@@ -17,6 +17,9 @@ class Array
 	end
 end
 
+V=->n{
+	[n,n,n]
+}
 N=->v{
 	v/Math.sqrt(v%v)
 }
@@ -34,17 +37,17 @@ RAYTRACE=->ray_orig,ray_dir,world,depth{
 	
 	sphere,min_dist=world.to_h{|s|[s,INTERSECT[s,ray_orig,ray_dir]]}.min_by{|k,v|v}
 	
-	return [0.5,0.5,0.5] if min_dist>=1e8
+	return V[0.5] if min_dist>=1e8
 	
 	intersect=ray_orig+ray_dir*min_dist
 	normal=N[(intersect-sphere[0])/sphere[1]]
 	
-	color=[0.05,0.05,0.05]
+	color=V[0.05]
 	
 	light_pos=[0,20,10]
 	
 	light_dir=N[light_pos-intersect]
-	origin_dir=N[[0,0,0]-intersect]
+	origin_dir=N[V[0]-intersect]
 	
 	offset=intersect+normal*1e-4
 	
@@ -60,13 +63,13 @@ RAYTRACE=->ray_orig,ray_dir,world,depth{
 	end
 	
 	phong=normal%N[light_dir+origin_dir]
-	color+=[1,1,1]*phong.clamp(0,1)**50 if light_visible
+	color+=V[1]*phong.clamp(0,1)**50 if light_visible
 	
 	color
 }
 
 world=[
-	[[0,-10004,20],10000,[0.25,0.25,0.25],[0,0,0],0.2],
+	[[0,-10004,20],10000,V[0.25],V[0],0.2],
 	[[0,0,20],4,[1,0,0],[1,0,0],0.2],
 	[[6,-1,20],2,[0,0,1],[0,0,1],0.2],
 ]
@@ -80,6 +83,6 @@ puts"P3 640 480 255"
 		x=(2*((col+0.5)/640)-1)*angle*4/3.0
 		y=(1-2*((row+0.5)/480))*angle
 		
-		RAYTRACE[[0,0,0],N[[x,y,1]],world,0].each{|c|$><<(c.clamp(0,1)*255).to_i<<" "}
+		RAYTRACE[V[0],N[[x,y,1]],world,0].each{|c|$><<(c.clamp(0,1)*255).to_i<<" "}
 	end
 end
