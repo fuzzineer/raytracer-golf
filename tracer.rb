@@ -17,17 +17,14 @@ class Array
 	end
 end
 
-A=->a{
-	a%a
-}
 N=->a{
-	a/Math.sqrt(A[a])
+	a/Math.sqrt(a%a)
 }
 INTERSECT=->sphere,ray_orig,ray_dir{
 	l=sphere[0]-ray_orig
 	tca=l%ray_dir
 	return 1e8 if tca<0
-	d2=A[l]-tca**2
+	d2=l%l-tca**2
 	return 1e8 if d2>sphere[1]**2
 	thc=Math.sqrt(sphere[1]**2-d2)
 	[tca-thc,tca+thc].min
