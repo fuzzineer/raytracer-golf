@@ -12,20 +12,20 @@ class Array
 	def / f
 		map{|m|m/f}
 	end
+	def % a
+		zip(a).map{|m,n|m*n}.sum
+	end
 end
 
-D=->a,b{
-	a.zip(b).map{|m,n|m*n}.sum
-}
 A=->a{
-	D[a,a]
+	a%a
 }
 N=->a{
 	a/Math.sqrt(A[a])
 }
 INTERSECT=->sphere,ray_orig,ray_dir{
 	l=sphere[0]-ray_orig
-	tca=D[l,ray_dir]
+	tca=l%ray_dir
 	return 1e8 if tca<0
 	d2=A[l]-tca**2
 	return 1e8 if d2>sphere[1]**2
@@ -57,15 +57,15 @@ RAYTRACE=->ray_orig,ray_dir,world,depth{
 	light_distances=world.map{|s|INTERSECT[s,offset,light_dir]}
 	light_visible=light_distances[world.index(sphere)]==light_distances.min
 	
-	lv=[0,D[normal,light_dir]].max
+	lv=[0,normal%light_dir].max
 	color+=COLOR[sphere,intersect]*lv if light_visible
 	
 	if sphere[4]>0&&depth<5
-		reflect_ray_dir=N[ray_dir-normal*2*D[ray_dir,normal]]
+		reflect_ray_dir=N[ray_dir-normal*2*(ray_dir%normal)]
 		color+=RAYTRACE[offset,reflect_ray_dir,world,depth+1]*sphere[4]
 	end
 	
-	phong=D[normal,N[light_dir+origin_dir]]
+	phong=normal%N[light_dir+origin_dir]
 	color+=[1,1,1]*phong.clamp(0,1)**50 if light_visible
 	
 	color
