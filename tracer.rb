@@ -14,20 +14,20 @@ class Array
 	end
 end
 
-DOT_VEC=->a,b{
+D=->a,b{
 	a.zip(b).map{|m,n|m*n}.sum
 }
-ABS=->a{
-	DOT_VEC[a,a]
+A=->a{
+	D[a,a]
 }
-NORM=->a{
-	a/Math.sqrt(ABS[a])
+N=->a{
+	a/Math.sqrt(A[a])
 }
 INTERSECT=->sphere,ray_orig,ray_dir{
 	l=sphere[0]-ray_orig
-	tca=DOT_VEC[l,ray_dir]
+	tca=D[l,ray_dir]
 	return 1e8 if tca<0
-	d2=ABS[l]-tca**2
+	d2=A[l]-tca**2
 	return 1e8 if d2>sphere[1]**2
 	thc=Math.sqrt(sphere[1]**2-d2)
 	[tca-thc,tca+thc].min
@@ -43,29 +43,29 @@ RAYTRACE=->ray_orig,ray_dir,world,depth{
 	return [0.5,0.5,0.5] if min_dist>=1e8
 	
 	intersect=ray_orig+ray_dir*min_dist
-	normal=NORM[(intersect-sphere[0])/sphere[1]]
+	normal=N[(intersect-sphere[0])/sphere[1]]
 	
 	color=[0.05,0.05,0.05]
 	
 	light_pos=[0,20,10]
 	
-	light_dir=NORM[light_pos-intersect]
-	origin_dir=NORM[[0,0,0]-intersect]
+	light_dir=N[light_pos-intersect]
+	origin_dir=N[[0,0,0]-intersect]
 	
 	offset=intersect+normal*1e-4
 	
 	light_distances=world.map{|s|INTERSECT[s,offset,light_dir]}
 	light_visible=light_distances[world.index(sphere)]==light_distances.min
 	
-	lv=[0,DOT_VEC[normal,light_dir]].max
+	lv=[0,D[normal,light_dir]].max
 	color+=COLOR[sphere,intersect]*lv if light_visible
 	
 	if sphere[4]>0&&depth<5
-		reflect_ray_dir=NORM[ray_dir-normal*2*DOT_VEC[ray_dir,normal]]
+		reflect_ray_dir=N[ray_dir-normal*2*D[ray_dir,normal]]
 		color+=RAYTRACE[offset,reflect_ray_dir,world,depth+1]*sphere[4]
 	end
 	
-	phong=DOT_VEC[normal,NORM[light_dir+origin_dir]]
+	phong=D[normal,N[light_dir+origin_dir]]
 	color+=[1,1,1]*phong.clamp(0,1)**50 if light_visible
 	
 	color
@@ -86,6 +86,6 @@ puts"P3 640 480 255"
 		x=(2*((col+0.5)/640)-1)*angle*4/3.0
 		y=(1-2*((row+0.5)/480))*angle
 		
-		RAYTRACE[[0,0,0],NORM[[x,y,1]],world,0].each{|c|$><<(c.clamp(0,1)*255).to_i<<" "}
+		RAYTRACE[[0,0,0],N[[x,y,1]],world,0].each{|c|$><<(c.clamp(0,1)*255).to_i<<" "}
 	end
 end
