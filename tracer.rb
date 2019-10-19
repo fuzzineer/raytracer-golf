@@ -22,11 +22,12 @@ def norm(a)
 end
 
 class Sphere
-	attr_reader :center, :radius, :color_vec, :reflect
-	def initialize(center, radius, color_vec, reflect)
+	attr_reader :center, :radius, :color1_vec, :color2_vec, :reflect
+	def initialize(center, radius, color1_vec, color2_vec, reflect)
 		@center = center
 		@radius = radius
-		@color_vec = color_vec
+		@color1_vec = color1_vec
+		@color2_vec = color2_vec
 		@reflect = reflect
 	end
 	
@@ -40,14 +41,7 @@ class Sphere
 		return [tca - thc, tca + thc].min
 	end
 	def color(intersect)
-		color_vec
-	end
-end
-
-class CheckeredSphere < Sphere
-	def color(intersect)
-		checker = (intersect[0].floor % 2) == (intersect[2].floor % 2)
-		mul_vec(color_vec, checker ? 1 : 0)
+		(intersect[0].floor % 2) == (intersect[2].floor % 2) ? color1_vec : color2_vec
 	end
 end
 
@@ -87,9 +81,9 @@ def raytrace(ray_orig, ray_dir, world, depth = 0)
 end
 
 world = [
-	CheckeredSphere.new([0, -10004, 20], 10000, [0.25]*3, 0.2),
-	Sphere.new([0, 0, 20], 4, [1, 0, 0], 0.2),
-	Sphere.new([6, -1, 20], 2, [0, 0, 1], 0.2),
+	Sphere.new([0, -10004, 20], 10000, [0.25]*3, [0]*3, 0.2),
+	Sphere.new([0, 0, 20], 4, [1, 0, 0], [1, 0, 0], 0.2),
+	Sphere.new([6, -1, 20], 2, [0, 0, 1], [0, 0, 1], 0.2),
 ]
 
 aspect_ratio = 4/3.0
