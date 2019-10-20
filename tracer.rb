@@ -1,18 +1,18 @@
 
 class Array
-	def +v
+	def+v
 		zip(v).map{|a,b|a+b}
 	end
-	def -v
+	def-v
 		zip(v).map{|a,b|a-b}
 	end
-	def *f
+	def*f
 		map{|a|a*f}
 	end
-	def /f
+	def/f
 		map{|m|m/f}
 	end
-	def %v
+	def%v
 		zip(v).map{|a,b|a*b}.sum
 	end
 end
