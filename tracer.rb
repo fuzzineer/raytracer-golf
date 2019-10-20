@@ -37,7 +37,7 @@ R=->ray_orig,ray_dir,world,depth{
 	
 	sphere,min_dist=world.to_h{|s|[s,I[s,ray_orig,ray_dir]]}.min_by{|k,v|v}
 	
-	return V[0.5] if min_dist>=1e8
+	return V[0.5]if min_dist>=1e8
 	
 	intersect=ray_orig+ray_dir*min_dist
 	normal=N[(intersect-sphere[0])/sphere[1]]
@@ -57,7 +57,7 @@ R=->ray_orig,ray_dir,world,depth{
 	lv=[0,normal%light_dir].max
 	color+=((intersect[0].floor%2==intersect[2].floor%2)?sphere[2]:sphere[3])*lv if light_visible
 	
-	if sphere[4]>0&&depth<5
+	if sphere[4]>0&&depth<3
 		reflect_ray_dir=N[ray_dir-normal*2*(ray_dir%normal)]
 		color+=R[offset,reflect_ray_dir,world,depth+1]*sphere[4]
 	end
@@ -71,7 +71,7 @@ R=->ray_orig,ray_dir,world,depth{
 world=[
 	[[0,-10004,20],10000,V[0.25],V[0],0.2],
 	[[0,0,20],4,[1,0,0],[1,0,0],0.2],
-	[[6,-1,20],2,[0,0,1],[0,0,1],0.2],
+	[[6,-1,20],2,[0,0,1],[0,0,1],0.2]
 ]
 
 angle=0.2679491924311227
