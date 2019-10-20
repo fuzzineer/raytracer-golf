@@ -78,11 +78,9 @@ angle=0.2679491924311227
 
 puts"P3 640 480 255"
 
-0.upto(479)do|row|
-	0.upto(639)do|col|
-		x=(2*((col+0.5)/640)-1)*angle*4/3.0
-		y=(1-2*((row+0.5)/480))*angle
-		
-		R[V[0],N[[x,y,1]],world,0].each{|c|$><<(c.clamp(0,1)*255).to_i<<" "}
-	end
-end
+[*0..479].product([*0..639]){|row,col|
+	x=(2*((col+0.5)/640)-1)*angle*4/3.0
+	y=(1-2*((row+0.5)/480))*angle
+	
+	R[V[0],N[[x,y,1]],world,0].each{|c|$><<(c.clamp(0,1)*255).to_i<<" "}
+}
