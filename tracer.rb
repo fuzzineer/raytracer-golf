@@ -3,13 +3,13 @@ class Array
 		zip(v).map{|a,b|a+b}
 	end
 	def-v
-		zip(v).map{|a,b|a-b}
+		self+v*-1
 	end
 	def*f
 		map{|a|a*f}
 	end
 	def/f
-		map{|m|m/f}
+		self*f**-1
 	end
 	def%v
 		zip(v).map{|a,b|a*b}.sum
