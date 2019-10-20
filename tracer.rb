@@ -1,4 +1,3 @@
-
 class Array
 	def+v
 		zip(v).map{|a,b|a+b}
@@ -44,7 +43,7 @@ R=->ray_orig,ray_dir,world,depth{
 	
 	color=V[0.05]
 	
-	light_pos=[0,20,10]
+	light_pos=0,20,10
 	
 	light_dir=N[light_pos-intersect]
 	origin_dir=N[V[0]-intersect]
@@ -68,11 +67,7 @@ R=->ray_orig,ray_dir,world,depth{
 	color
 }
 
-world=[
-	[[0,-10004,20],10000,V[0.25],V[0],0.2],
-	[[0,0,20],4,[1,0,0],[1,0,0],0.2],
-	[[6,-1,20],2,[0,0,1],[0,0,1],0.2]
-]
+world=[[0,-10004,20],10000,V[0.25],V[0],0.2],[[0,0,20],4,[1,0,0],[1,0,0],0.2],[[6,-1,20],2,[0,0,1],[0,0,1],0.2]
 
 angle=0.2679491924311227
 
