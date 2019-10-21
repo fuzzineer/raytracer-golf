@@ -49,11 +49,12 @@ R=->ray_orig,ray_dir,depth{
 	light_distances=WORLD.map{|s|I[s,offset,light_dir]}
 	light_visible=light_distances[WORLD.index(sphere)]==light_distances.min
 	
-	color+=(intersect[0].floor%2==intersect[2].floor%2?sphere[2]:sphere[3])*[0,normal%light_dir].max if light_visible
+	if light_visible
+		color+=(intersect[0].floor%2==intersect[2].floor%2?sphere[2]:sphere[3])*[0,normal%light_dir].max
+		color+=V[1]*(normal%N[light_dir+N[V[0]-intersect]]).clamp(0,1)**50
+	end
 	
 	color+=R[offset,N[ray_dir-normal*2*(ray_dir%normal)],depth+1]*sphere[4]if sphere[4]>0&&depth<3
-	
-	color+=V[1]*(normal%N[light_dir+N[V[0]-intersect]]).clamp(0,1)**50 if light_visible
 	
 	color
 }
