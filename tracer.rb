@@ -48,14 +48,14 @@ R=->ray_orig,ray_dir,depth{
 	
 	light_distances=WORLD.map{|s|I[s,offset,light_dir]}
 	
-	color+=(intersect[0].floor%2==intersect[2].floor%2?sphere[2]:sphere[3])*[0,normal%light_dir].max+V[1]*(normal%N[light_dir+N[V[0]-intersect]]).clamp(0,1)**50 if light_distances[WORLD.index(sphere)]==light_distances.min
+	color+=(!sphere[4]||intersect[0].floor%2==intersect[2].floor%2?sphere[2]:sphere[4])*[0,normal%light_dir].max+V[1]*(normal%N[light_dir+N[V[0]-intersect]]).clamp(0,1)**50 if light_distances[WORLD.index(sphere)]==light_distances.min
 	
-	color+=R[offset,N[ray_dir-normal*2*(ray_dir%normal)],depth+1]*sphere[4]if sphere[4]>0&&depth<3
+	color+=R[offset,N[ray_dir-normal*2*(ray_dir%normal)],depth+1]*sphere[3]if sphere[3]>0&&depth<3
 	
 	color
 }
 
-WORLD=[[0,-10004,20],10000,V[0.25],V[0],0.2],[[0,0,20],4,[1,0,0],[1,0,0],0.2],[[6,-1,20],2,[0,0,1],[0,0,1],0.2]
+WORLD=[[0,-10004,20],10000,V[0.25],0.2,V[0]],[[0,0,20],4,[1,0,0],0.2],[[6,-1,20],2,[0,0,1],0.2]
 
 angle=0.2679491924311227
 
