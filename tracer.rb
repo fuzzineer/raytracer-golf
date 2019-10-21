@@ -26,7 +26,7 @@ I=->sphere,ray_orig,ray_dir{
 	l=sphere[0]-ray_orig
 	tca=l%ray_dir
 	d2=l%l-tca**2
-	return 1e8 if tca<0||d2>sphere[1]**2
+	return 1e9 if tca<0||d2>sphere[1]**2
 	thc=Math.sqrt(sphere[1]**2-d2)
 	[tca-thc,tca+thc].min
 }
@@ -35,33 +35,25 @@ R=->ray_orig,ray_dir,world,depth{
 	
 	sphere,min_dist=world.to_h{|s|[s,I[s,ray_orig,ray_dir]]}.min_by{|k,v|v}
 	
-	return V[0.5]if min_dist>=1e8
+	return[1,0.6,0.5]*(1-ray_dir[1])**5 if min_dist>1e8
 	
 	intersect=ray_orig+ray_dir*min_dist
 	normal=N[(intersect-sphere[0])/sphere[1]]
 	
 	color=V[0.05]
 	
-	light_pos=0,20,10
-	
-	light_dir=N[light_pos-intersect]
-	origin_dir=N[V[0]-intersect]
+	light_dir=N[[0,20,10]-intersect]
 	
 	offset=intersect+normal*1e-4
 	
 	light_distances=world.map{|s|I[s,offset,light_dir]}
 	light_visible=light_distances[world.index(sphere)]==light_distances.min
 	
-	lv=[0,normal%light_dir].max
-	color+=((intersect[0].floor%2==intersect[2].floor%2)?sphere[2]:sphere[3])*lv if light_visible
+	color+=(intersect[0].floor%2==intersect[2].floor%2?sphere[2]:sphere[3])*[0,normal%light_dir].max if light_visible
 	
-	if sphere[4]>0&&depth<3
-		reflect_ray_dir=N[ray_dir-normal*2*(ray_dir%normal)]
-		color+=R[offset,reflect_ray_dir,world,depth+1]*sphere[4]
-	end
+	color+=R[offset,N[ray_dir-normal*2*(ray_dir%normal)],world,depth+1]*sphere[4]if sphere[4]>0&&depth<3
 	
-	phong=normal%N[light_dir+origin_dir]
-	color+=V[1]*phong.clamp(0,1)**50 if light_visible
+	color+=V[1]*(normal%N[light_dir+N[V[0]-intersect]]).clamp(0,1)**50 if light_visible
 	
 	color
 }
@@ -73,8 +65,5 @@ angle=0.2679491924311227
 puts"P3 640 480 255"
 
 [*0..479].product([*0..639]){|row,col|
-	x=(2*((col+0.5)/640)-1)*angle*4/3.0
-	y=(1-2*((row+0.5)/480))*angle
-	
-	R[V[0],N[[x,y,1]],world,0].each{|c|$><<(c.clamp(0,1)*255).to_i<<" "}
+	R[V[0],N[[(2*((col+0.5)/640)-1)*angle*4/3,(1-2*((row+0.5)/480))*angle,1]],world,0].each{|c|$><<(c.clamp(0,1)*255).to_i<<" "}
 }
