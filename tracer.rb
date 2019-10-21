@@ -50,7 +50,7 @@ R=->ray_orig,ray_dir,depth{
 	
 	color+=(!sphere[4]||intersect[0].floor%2==intersect[2].floor%2?sphere[2]:sphere[4])*[0,normal%light_dir].max+V[1]*(normal%N[light_dir+N[V[0]-intersect]]).clamp(0,1)**50 if light_distances[WORLD.index(sphere)]==light_distances.min
 	
-	color+=R[offset,N[ray_dir-normal*2*(ray_dir%normal)],depth+1]*sphere[3]if sphere[3]>0&&depth<3
+	color+=R[offset,N[ray_dir-normal*2*(ray_dir%normal)],depth+1]*sphere[3]if depth<3
 	
 	color
 }
