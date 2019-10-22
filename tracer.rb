@@ -12,7 +12,7 @@ class Array
 		self*f**-1
 	end
 	def%v
-		zip(v).map{|a,b|a*b}.sum
+		zip(v).sum{|a,b|a*b}
 	end
 end
 
