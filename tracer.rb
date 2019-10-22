@@ -33,7 +33,7 @@ I=->sphere,ray_orig,ray_dir{
 
 R=->ray_orig,ray_dir,depth{
 	
-	sphere,min_dist=WORLD.to_h{|s|[s,I[s,ray_orig,ray_dir]]}.min_by{|k,v|v}
+	sphere,min_dist=WORLD.map{|s|[s,I[s,ray_orig,ray_dir]]}.min_by{|k,v|v}
 	
 	return[1,0.6,0.5]*(1-ray_dir[1])**5 if min_dist>1e8
 	
