@@ -48,9 +48,9 @@ R=->ray_orig,ray_dir,depth{
 	
 	light_distances=WORLD.map{|s|I[s,offset,light_dir]}
 	
-	color+=sphere[!sphere[4]||intersect[0].ceil%2==intersect[2].ceil%2?2:4]*[0,normal%light_dir].max+V[1]*(normal%N[light_dir+N[V[0]-intersect]]).clamp(0,1)**50 if light_distances[WORLD.index(sphere)]==light_distances.min
+	light_distances[WORLD.index(sphere)]==light_distances.min&&color+=sphere[!sphere[4]||intersect[0].ceil%2==intersect[2].ceil%2?2:4]*[0,normal%light_dir].max+V[1]*(normal%N[light_dir+N[V[0]-intersect]]).clamp(0,1)**50
 	
-	color+=R[offset,N[ray_dir-normal*2*(ray_dir%normal)],depth+1]*sphere[3]if depth<3
+	depth<3&&color+=R[offset,N[ray_dir-normal*2*(ray_dir%normal)],depth+1]*sphere[3]
 	
 	color
 }
