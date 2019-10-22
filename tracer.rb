@@ -20,14 +20,14 @@ V=->n{
 	[n,n,n]
 }
 N=->v{
-	v/Math.sqrt(v%v)
+	v/(v%v)**0.5
 }
 I=->sphere,ray_orig,ray_dir{
 	l=sphere[0]-ray_orig
 	tca=l%ray_dir
 	d2=l%l-tca**2
 	return 1e9 if tca<0||d2>sphere[1]**2
-	thc=Math.sqrt(sphere[1]**2-d2)
+	thc=(sphere[1]**2-d2)**0.5
 	[tca-thc,tca+thc].min
 }
 
