@@ -58,11 +58,8 @@ R=->ray_orig,ray_dir,depth{
 
 WORLD=[[[0,-10002,20],10000,V[0.25],0.3,V[0]]]
 
-0.step(25, PI / 4) { |t|
-	h = 2**(-0.1 * t) * sin(t/2).abs * 10
-	pos = [t - 14.5, h - 1.35, 37 - t]
-	color = [0,2,4].map{|i|cos(t/PI+i).clamp(0,1)}
-	WORLD << [pos, 0.7, color, 0.3]
+0.step(25,PI/4){|t|
+	WORLD<<[[t-14.5,2**(-0.1*t)*sin(t/2).abs*10-1.35,37-t],0.7,[0,2,4].map{|i|cos(t/PI+i).clamp(0,1)},0.3]
 }
 
 angle=15/56r
