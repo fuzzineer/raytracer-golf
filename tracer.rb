@@ -35,7 +35,7 @@ R=->ray_orig,ray_dir,depth{
 	
 	sphere,min_dist=WORLD.map{|s|[s,I[s,ray_orig,ray_dir]]}.min_by{|k,v|v}
 	
-	return[1,0.6,0.5]*(1-ray_dir[1])**5 if min_dist>1e8
+	return[0.4,0.8,1]*(1-ray_dir[1])**3 if min_dist>1e8
 	
 	intersect=ray_orig+ray_dir*min_dist
 	normal=N[(intersect-sphere[0])/sphere[1]]
@@ -55,7 +55,14 @@ R=->ray_orig,ray_dir,depth{
 	color
 }
 
-WORLD=[[0,-10004,20],10000,V[0.25],0.2,V[0]],[[0,0,20],4,[1,0,0],0.2],[[6,-1,20],2,[0,0,1],0.2]
+WORLD=[[[0,-10002,20],10000,V[0.25],0.3,V[0]]]
+
+0.step(25, Math::PI / 4) { |t|
+	h = 2**(-0.1 * t) * Math.sin(t/2).abs * 10
+	pos = [t - 14.5, h - 1.35, 37 - t]
+	color = [0,2,4].map{|i|Math.cos(t/Math::PI+i).clamp(0,1)}
+	WORLD << [pos, 0.7, color, 0.3]
+}
 
 angle=15/56r
 
