@@ -1,3 +1,4 @@
+include Math
 class Array
 	def+v
 		zip(v).map{|a,b|a+b}
@@ -20,14 +21,14 @@ V=->n{
 	[n,n,n]
 }
 N=->v{
-	v/(v%v)**0.5
+	v/sqrt(v%v)
 }
 I=->sphere,ray_orig,ray_dir{
 	l=sphere[0]-ray_orig
 	tca=l%ray_dir
 	d2=l%l-tca**2
 	return 1e9 if tca<0||d2>sphere[1]**2
-	thc=(sphere[1]**2-d2)**0.5
+	thc=sqrt(sphere[1]**2-d2)
 	[tca-thc,tca+thc].min
 }
 
@@ -57,10 +58,10 @@ R=->ray_orig,ray_dir,depth{
 
 WORLD=[[[0,-10002,20],10000,V[0.25],0.3,V[0]]]
 
-0.step(25, Math::PI / 4) { |t|
-	h = 2**(-0.1 * t) * Math.sin(t/2).abs * 10
+0.step(25, PI / 4) { |t|
+	h = 2**(-0.1 * t) * sin(t/2).abs * 10
 	pos = [t - 14.5, h - 1.35, 37 - t]
-	color = [0,2,4].map{|i|Math.cos(t/Math::PI+i).clamp(0,1)}
+	color = [0,2,4].map{|i|cos(t/PI+i).clamp(0,1)}
 	WORLD << [pos, 0.7, color, 0.3]
 }
 
