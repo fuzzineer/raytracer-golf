@@ -28,7 +28,7 @@ I=->sphere,ray_orig,ray_dir{
 	tca=l%ray_dir
 	d2=l%l-tca**2
 	return 1e9 if tca<0||d2>sphere[1]**2
-	thc=sqrt(sphere[1]**2-d2)
+	thc=sqrt sphere[1]**2-d2
 	[tca-thc,tca+thc].min
 }
 
