@@ -43,7 +43,7 @@ R=->ray_orig,ray_dir,depth{
 	
 	color=V[0.05]
 	
-	light_dir=N[[0,20,10]-intersect]
+	light_dir=N[[-20,40,10]-intersect]
 	
 	offset=intersect+normal*1e-4
 	
@@ -59,13 +59,13 @@ R=->ray_orig,ray_dir,depth{
 WORLD=[[[0,-10002,20],1e4,V[0.25],V[0]]]
 
 0.step(25,PI/4){|t|
-	WORLD<<[[t-14.5,2**(-0.1*t)*sin(t/2).abs*10-1.35,37-t],0.7,[0,2,4].map{|i|cos(t/PI+i).clamp(0,1)}]
+	WORLD<<[[t-14.5,2**(-0.1*t)*sin(t/2).abs*10-1.35,37-t],0.7,[0,2,4].map{|i|cos(t/PI+i).clamp 0,1}]
 }
 
 angle=15/56r
 
-puts"P3 640 480 255"
+$><<"P3 640 480 255"
 
 [*0..479].product([*0..639]){|row,col|
-	R[V[0],N[[(2.*(col+0.5)/640-1)*angle*4/3,(1-2.*(row+0.5)/480)*angle,1]],0].map{|c|$><<(c.clamp(0,1)*255).to_i<<" "}
+	R[V[0],N[[(2.*(col+0.5)/640-1)*angle*4/3,(1-2.*(row+0.5)/480)*angle,1]],0].map{|c|$><<" "<<(c.clamp(0,1)*255).to_i}
 }
