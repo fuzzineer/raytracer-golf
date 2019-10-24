@@ -49,17 +49,17 @@ R=->ray_orig,ray_dir,depth{
 	
 	light_distances=WORLD.map{|s|I[s,offset,light_dir]}
 	
-	light_distances[WORLD.index(sphere)]==light_distances.min&&color+=sphere[!sphere[4]||intersect[0].ceil%2==intersect[2].ceil%2?2:4]*[0,normal%light_dir].max+V[1]*(normal%N[light_dir+N[V[0]-intersect]]).clamp(0,1)**50
+	light_distances[WORLD.index(sphere)]==light_distances.min&&color+=sphere[!sphere[3]||intersect[0].ceil%2==intersect[2].ceil%2?2:3]*[0,normal%light_dir].max+V[1]*(normal%N[light_dir+N[V[0]-intersect]]).clamp(0,1)**50
 	
-	depth<3&&color+=R[offset,N[ray_dir-normal*2*(ray_dir%normal)],depth+1]*sphere[3]
+	depth<3&&color+=R[offset,N[ray_dir-normal*2*(ray_dir%normal)],depth+1]*0.3
 	
 	color
 }
 
-WORLD=[[[0,-10002,20],1e4,V[0.25],0.3,V[0]]]
+WORLD=[[[0,-10002,20],1e4,V[0.25],V[0]]]
 
 0.step(25,PI/4){|t|
-	WORLD<<[[t-14.5,2**(-0.1*t)*sin(t/2).abs*10-1.35,37-t],0.7,[0,2,4].map{|i|cos(t/PI+i).clamp(0,1)},0.3]
+	WORLD<<[[t-14.5,2**(-0.1*t)*sin(t/2).abs*10-1.35,37-t],0.7,[0,2,4].map{|i|cos(t/PI+i).clamp(0,1)}]
 }
 
 angle=15/56r
