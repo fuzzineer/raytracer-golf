@@ -31,6 +31,9 @@ I=->sphere,ray_orig,ray_dir{
 	thc=sqrt sphere[1]**2-d2
 	[tca-thc,tca+thc].min
 }
+C=->x{
+	x.clamp 0,1
+}
 
 R=->ray_orig,ray_dir,depth{
 	
@@ -49,7 +52,7 @@ R=->ray_orig,ray_dir,depth{
 	
 	light_distances=WORLD.map{|s|I[s,offset,light_dir]}
 	
-	light_distances[WORLD.index(sphere)]==light_distances.min&&color+=sphere[!sphere[3]||intersect[0].ceil%2==intersect[2].ceil%2?2:3]*[0,normal%light_dir].max+V[1]*(normal%N[light_dir+N[V[0]-intersect]]).clamp(0,1)**50
+	light_distances[WORLD.index(sphere)]==light_distances.min&&color+=sphere[!sphere[3]||intersect[0].ceil%2==intersect[2].ceil%2?2:3]*[0,normal%light_dir].max+V[1]*C[normal%N[light_dir+N[V[0]-intersect]]]**50
 	
 	depth<3&&color+=R[offset,N[ray_dir-normal*2*(ray_dir%normal)],depth+1]*0.3
 	
@@ -59,7 +62,7 @@ R=->ray_orig,ray_dir,depth{
 WORLD=[[[0,-10002,20],1e4,V[0.25],V[0]]]
 
 0.step(25,PI/4){|t|
-	WORLD<<[[t-14.5,2**(-0.1*t)*sin(t/2).abs*10-1.35,37-t],0.7,[0,2,4].map{|i|cos(t/PI+i).clamp 0,1}]
+	WORLD<<[[t-14.5,2**(-0.1*t)*sin(t/2).abs*10-1.35,37-t],0.7,[0,2,4].map{|i|C[cos(t/PI+i)]}]
 }
 
 angle=15/56r
@@ -67,5 +70,5 @@ angle=15/56r
 $><<"P3 640 480 255"
 
 [*0..479].product([*0..639]){|row,col|
-	R[V[0],N[[(2.*(col+0.5)/640-1)*angle*4/3,(1-2.*(row+0.5)/480)*angle,1]],0].map{|c|$><<" "<<(c.clamp(0,1)*255).to_i}
+	R[V[0],N[[(2.*(col+0.5)/640-1)*angle*4/3,(1-2.*(row+0.5)/480)*angle,1]],0].map{|c|$><<" "<<(C[c]*255).to_i}
 }
